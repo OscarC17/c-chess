@@ -110,9 +110,9 @@ int main() {
         board_state.push_back(line);
     }
 
-    for (auto line : board_state) {
-        for (auto piece : line) {
-            std::cout << piece;
+    for (int i = 0; i < board_state.size(); i++) {
+        for (int j = 0; j < board_state[i].size(); j++) {
+            std::cout << board_state[i][j];
         }
         std::cout << std::endl;
     }
