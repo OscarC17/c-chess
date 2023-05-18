@@ -1,3 +1,4 @@
+#include <math.h>
 #include <unordered_map>
 #include <iostream>
 #include <string>
@@ -37,7 +38,7 @@ std::unordered_map<char, std::string> art_assoc = {
 std::unordered_map<char, std::string> rules_encoded = {
     {'P', "*s0001as-101bs0101cs0002"},
     {'R', "*r0001*r00-1*r0100*r-100"},
-    {'Y', "*s0102*s0201*s02-1*s01-2*s-102*s-201*s-2-1*s-1-2"},
+    {'H', "*s0102*s0201*s02-1*s01-2*s-102*s-201*s-2-1*s-1-2"},
     {'B', "*r0101*r01-1*r-101*r-1-1"},
     {'Q', "*r0101*r01-1*r-101*r-1-1*r0001*r00-1*r0100*r-100"},
     {'K', "*s0101*s01-1*s-101*s-1-1*s0001*s00-1*s0100*s-100"},
@@ -61,11 +62,12 @@ int letter_to_num(char letter) {
     }
 }
 
-bool valid_move(std::string rule, char special_case, int from_x, int from_y, int to_x, int to_y) {
+bool valid_move(std::string rule, char special_case, char * board_state, int from_x, int from_y, int to_x, int to_y) {
     bool passes = false;
     int dx = from_x - to_x;
     int dy = from_y - to_y;
     std::vector<std::pair<int, int>> rules_generated;
+    std::vector<std::pair<int, int>> rules_generated_normal;
 
     for (int i = 0; i < (int)rule.length() / 6; i++) {
         if (rule[i * 6] == '*' || rule[i * 6] == special_case) {
@@ -91,10 +93,48 @@ bool valid_move(std::string rule, char special_case, int from_x, int from_y, int
         }
     }
 
-    for (size_t i = 0; i < rules_generated.size(); i++) {
-        std::cout << "(" << rules_generated[i].first << ", " << rules_generated[i].second << ")\n";
+
+    for (auto i : rules_generated) {
+        rules_generated_normal.push_back(i);
     }
-    return false;
+
+
+
+    std::cout << "\nsize: " << rules_generated.size() << "\n";
+    for (size_t i = 0; i < rules_generated_normal.size(); i++) {
+        double magnitude = sqrt(pow(rules_generated[i].first, 2) + pow(rules_generated[i].second, 2));
+        rules_generated_normal[i].first = (static_cast<double>(rules_generated_normal[i].first) / magnitude) * sqrt(2);
+        rules_generated_normal[i].second = (static_cast<double>(rules_generated_normal[i].second) / magnitude) * sqrt(2);
+        std::cout << "(" << rules_generated[i].first << ", " << rules_generated[i].second << ") ";
+        std::cout << "(" << rules_generated_normal[i].first << ", " << rules_generated_normal[i].second << ")\n";
+    }
+
+    int x_co = to_x;
+    int y_co = to_y;
+    size_t savei = 0;
+    for (size_t i = 0; i < rules_generated.size(); i++) {
+        if (to_x == from_x + rules_generated[i].first && to_y == from_y + rules_generated[i].second) {
+            passes = true;
+            savei = i;
+            i = rules_generated.size() + 1;
+        }
+    }
+    for (int i = 0; i < 1000; i++) {
+        if (board_state[y_co * 8 + x_co] != ' ') {
+            passes = false;
+            i = 1001;
+        } else if (x_co == from_x && y_co == from_y) {
+            i = 1001;
+        }
+        std::cout << "Moments before\n";
+        std::cout << x_co << ", " << rules_generated_normal[savei].first << "\n";
+        x_co += rules_generated_normal[savei].first;
+        std::cout << "within\n";
+        y_co += rules_generated_normal[savei].second;
+        std::cout << "disaster\n";
+    }
+    std::cout << "oopa\n";
+    return passes;
 }
 
 
@@ -144,10 +184,14 @@ int main() {
         std::string user_input;
         std::cin >> user_input;
         int from_index = letter_to_num(user_input[0]) + 8 * (8 - ((int)user_input[1] - 48));
+        int from_x_in = letter_to_num(user_input[0]);
+        int from_y_in = (int)user_input[1]-48;
         std::cout << (int)user_input[1] -49 << "\n";
         std::cout << "Select destination: ";
         std::cin >> user_input;
         int to_index = letter_to_num(user_input[0]) + 8 * (8 - ((int)user_input[1] - 48));
+        int to_x_in = letter_to_num(user_input[0]);
+        int to_y_in = (int)user_input[1]-48;
         if (board_state[from_index] != ' ' && white_or_black(board_state[from_index]) == turn) {
             board_state[to_index] = board_state[from_index];
             board_state[from_index] = ' ';
@@ -156,9 +200,9 @@ int main() {
             turn = !turn;
         }
         turn = !turn;
-        valid_move(rules_encoded['q'], ' ', 1, 2, 3, 4);
-
+        std::cout << valid_move(rules_encoded[board_state[from_index]], ' ', board_state, from_x_in, from_y_in, to_x_in, to_y_in);
         
+    std::cout << "oopa1\n";
 
 
     }
