@@ -23,18 +23,18 @@ std::vector<std::vector<char>> board_state;
 
 
 std::unordered_map<char, std::string> art_assoc = {
-    {'p', "()"},
-    {'r', "uu"},
-    {'h', "|>"},
-    {'b', "{}"},
-    {'q', "vv"},
-    {'k', "++"},
-    {'P', "()"},
-    {'R', "nn"},
-    {'H', "<|"},
-    {'B', "{}"},
-    {'Q', "^^"},
-    {'K', "++"},
+    {'p', "Pa"},
+    {'r', "Ro"},
+    {'h', "Kn"},
+    {'b', "Bi"},
+    {'q', "Qu"},
+    {'k', "Ki"},
+    {'P', "Pa"},
+    {'R', "Ro"},
+    {'H', "Kn"},
+    {'B', "Bi"},
+    {'Q', "Qu"},
+    {'K', "Ki"},
     {' ', ""},
 };
 
@@ -57,7 +57,7 @@ std::unordered_map<char, std::string> rules_encoded = {
     {'b', "*r0101*r01-1*r-101*r-1-1"},
     {'q', "*r0101*r01-1*r-101*r-1-1*r0001*r00-1*r0100*r-100"},
     {'k', "*s0101*s01-1*s-101*s-1-1*s0001*s00-1*s0100*s-100"},
-    {'p', "*s00-1as-1-1bs01-1cs00-2"},
+    {'p', "*s00-1ds-1-1es01-1fs00-2"},
     {'R', "*r0001*r00-1*r0100*r-100"},
     {'H', "*s0102*s0201*s02-1*s01-2*s-102*s-201*s-2-1*s-1-2"},
     {'B', "*r0101*r01-1*r-101*r-1-1"},
@@ -65,44 +65,47 @@ std::unordered_map<char, std::string> rules_encoded = {
     {'K', "*s0101*s01-1*s-101*s-1-1*s0001*s00-1*s0100*s-100"},
 };
 
-std::vector<std::pair<int, int>> generate_list_of_valid_moves(std::unordered_map<char, std::string> input_rules_encoded, std::vector<std::vector<char>> input_board_state, char special_case, int from_x, int from_y, int to_x, int to_y) {
+std::vector<std::pair<int, int>> generate_list_of_valid_moves(std::unordered_map<char, std::string> input_rules_encoded, std::vector<std::vector<char>> input_board_state, std::string special_case, int from_x, int from_y, int to_x, int to_y) {
     char piece = input_board_state[from_y][from_x];
     std::string ruleset = rules_encoded[piece];
     std::vector<std::pair<int, int>> valid_moves;
 
-    std::cout << "| " << piece << " |";
-    std::cout << "1\n";
-        std::cout << "ruleset len: " << ruleset.length() <<std::endl;
+    //std::cout << "| " << piece << " |";
+    //std::cout << "1\n";
+    //std::cout << "ruleset len: " << ruleset.length() <<std::endl;
     for (size_t i = 0; i < ruleset.length() / 6; i++) {
-        if (ruleset[i * 6] == '*' || ruleset[i*6] == special_case) {
-            int rep = (ruleset[i*6+1] == 'r')?10:2;
+        if (ruleset[i * 6] == '*' || special_case.find(ruleset[i*6]) != std::string::npos) {
+            int rep = (ruleset[i*6+1] == 'r')?10:1;
             //std::cout << "WHAT THE: " << i << " :EHT TAHW\n";
             int rule_x = std::stoi(std::string({ruleset[i*6+2], ruleset[i*6+3]}));
             int rule_y = std::stoi(std::string({ruleset[i*6+4], ruleset[i*6+5]}));
-            std::cout << rule_x << rule_y << "\n";
-            for (int j = 0; j < rep; j++) {
+            //std::cout << rule_x << rule_y << "\n";
+            for (int j = 1; j < rep + 1; j++) {
                 size_t x_index = from_x + rule_x * j;
                 size_t y_index = from_y + rule_y * j;
 
                 //std::cout << "THE MOVE IS AS FOLLOWS: " << x_index << ", " << y_index << "\n";
 
-                std::cout << "[" << x_index << ", " << y_index << "]\n";
+                //std::cout << "[" << x_index << ", " << y_index << "]\n";
                 if (x_index >= 8 || y_index >= 8 || x_index < 0 || y_index < 0) {
                 
                 } else if (input_board_state[y_index][x_index] != ' ') {
-                    i = rep + 1;
+                    if (white_or_black(input_board_state[y_index][x_index]) != white_or_black(piece)) {
+                        valid_moves.push_back(std::pair<int, int> (x_index, y_index));
+                    }
+                    j = rep + 1;
                 } else {
                     valid_moves.push_back(std::pair<int, int> (x_index, y_index));
                 }
             }
         }
     }
-    std::cout << "2\n";
-    std::cout << "you have " << valid_moves.size() << " moves\n";
+    //std::cout << "2\n";
+    //std::cout << "you have " << valid_moves.size() << " moves\n";
     for (auto move : valid_moves) {
         std::cout << "(" << move.first << ", " << move.second << ")\n";
     }
-    std::cout << "3\n";
+    //std::cout << "3\n";
     return valid_moves;
 }
 
@@ -180,11 +183,35 @@ int main() {
         int to_y_in = 8 - ((int)user_input[1]-48);
         int to_index = letter_to_num(to_x_in + 8 * to_y_in);
 
-        generate_list_of_valid_moves(rules_encoded, board_state, ' ',  from_x_in,  from_y_in,  to_x_in,  to_y_in);
+        std::string special = "";
+        if (board_state[from_y_in + 1][from_x_in + 1] != ' ') {
+            special += "b";
+        }
+        if (board_state[from_y_in + 1][from_x_in - 1] != ' ') {
+            special += "a";
+        }
+        if (board_state[from_y_in - 1][from_x_in + 1] != ' ') {
+            special += "d";
+        }
+        if (board_state[from_y_in - 1][from_x_in - 1] != ' ') {
+            special += "e";
+        }
+        //if (board_state[
+        std::vector<std::pair<int, int>> valid_moves = generate_list_of_valid_moves(rules_encoded, board_state, special,  from_x_in,  from_y_in,  to_x_in,  to_y_in);
+
+        bool valid_move = false;
+        for (auto move : valid_moves) {
+            if (to_x_in == move.first && to_y_in == move.second) {
+                valid_move = true;
+            }
+        }
 
         if (board_state[from_y_in][from_x_in] != ' ' && white_or_black(board_state[from_y_in][from_x_in]) == turn) {
             board_state[to_y_in][to_x_in] = board_state[from_y_in][from_x_in];
             board_state[from_y_in][from_x_in] = ' ';
+        } else if (!valid_move) {
+            std::cout << "You cannot do that\n";  
+            turn = !turn;
         } else {
             std::cout << "You (" << (turn?"White":"Black") << ") cannot move that piece\n";  
             turn = !turn;
