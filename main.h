@@ -1,32 +1,31 @@
 #include <vector>
+#include <utility>
+#include <string>
 
-const bool SIDE_WHITE = true;
-const bool SIDE_BLACK = false;
+const char SIDE_WHITE = '1';
+const char SIDE_BLACK = '0';
+const char SIDE_NONE = ' ';
 
-const int PIECE_PAWN = 0;
-const int PIECE_ROOK = 1;
-const int PIECE_KNIGHT = 2;
-const int PIECE_BISHOP = 3;
-const int PIECE_QUEEN = 4;
-const int PIECE_KING = 5;
+const char PIECE_PAWN = 'p';
+const char PIECE_ROOK = 'r';
+const char PIECE_KNIGHT = 'h';
+const char PIECE_BISHOP = 'b';
+const char PIECE_QUEEN = 'q';
+const char PIECE_KING = 'k';
 
 class ChessPiece {
 public:
-	//type: 
-	//	0 = pawn
-	//	1 = rook
-	//	2 = knight
-	//	3 = bishop
-	//	4 = queen
-	//	5 = king
-	int type;
-	bool side;
+	char type;
+	char side;
+	bool alive;
+	std::string moveset;
 	
-	ChessPiece(int t, bool s) : type(t), side(s) {}
+	ChessPiece(char t, char s, bool a, std::string m);
 };
 
-int drawBoard(std::vector<ChessPiece>);
+
+int drawBoard(std::vector<ChessPiece>, int, std::vector<int>);
 
 int inputToIndex();
 
-int evaluateRules();
+std::vector<int> genTurn(std::vector<ChessPiece>, std::string, int);

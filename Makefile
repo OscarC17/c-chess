@@ -1,4 +1,4 @@
-OBJS = main.o input.o output.o
+OBJS = main.o input.o output.o turn.o
 CFLAGS = -Wall
 INCLUDES =
 LIBS =

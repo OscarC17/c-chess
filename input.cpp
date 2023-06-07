@@ -26,5 +26,5 @@ int inputToIndex() {
 			second = 7 - (second - 49);
 		}
 	}
-	return second * 8 + first;
+	return first * 8 + second;
 } 
