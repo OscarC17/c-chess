@@ -6,11 +6,11 @@ int main(int argc, char * argv[]) {
 	
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
-			chessboard.push_back(ChessPiece(0));
+			chessboard.push_back(ChessPiece(PIECE_PAWN, SIDE_WHITE));
 		}
 	}
 
-	chessboard[4 * 8 + 4] = 5;
+	chessboard[4 * 8 + 4].type = PIECE_KING;
 
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
@@ -20,7 +20,10 @@ int main(int argc, char * argv[]) {
 		std::cout << std::endl;
 	}
 
+	drawBoard(chessboard);
+
 	inputToIndex();
+
 
 	return 0;
 }
