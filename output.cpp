@@ -53,7 +53,7 @@ int drawBoard(std::vector<ChessPiece> chessboard, int selection, std::vector<int
 
 	}
 	if (selection >= 0) {
-		canvas.at(getCanvasIndex((int) selection / 8, selection % 8) + 1) = '*';
+		canvas.at(getCanvasIndex((int) selection / 8, selection % 8) + 1) = '#';
 	}
 	if (moves.size() <= 0) {
 		std::cout << canvas;
@@ -61,7 +61,7 @@ int drawBoard(std::vector<ChessPiece> chessboard, int selection, std::vector<int
 	}
 
 	for (int i = 0; i < moves.size(); i++) {
-		canvas.at(getCanvasIndex((int) moves.at(i) / 8, moves.at(i) % 8) + 1) = '.';
+		canvas.at(getCanvasIndex((int) moves.at(i) / 8, moves.at(i) % 8) + 1) = '*';
 		std::cout << canvas;
 	}
 	return 0;	

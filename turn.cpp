@@ -22,6 +22,9 @@ std::vector<int> genTurn(std::vector<ChessPiece> pieces, std::string special_cas
             std::cout << "WHAT THE: " << i << " :EHT TAHW\n";
             int rule_x = std::stoi(std::string({ruleset[i*6+2], ruleset[i*6+3]}));
             int rule_y = std::stoi(std::string({ruleset[i*6+4], ruleset[i*6+5]}));
+			if (piece.side == SIDE_BLACK) {
+				rule_x = -rule_x;
+			}
             std::cout << "x:" << rule_x << " y:" << rule_y << "\n";
             for (int j = 1; j < rep + 1; j++) {
                 int x_index = from_x + rule_x * j;
@@ -37,7 +40,7 @@ std::vector<int> genTurn(std::vector<ChessPiece> pieces, std::string special_cas
                 	
                 } else if (pieces.at(y_index * 8 + x_index).type != ' ') {
 					std::cout << "numa ye";
-                    if (/*(pieces.at(y_index * 8 + x_index).side != '1') != (piece.side != '1')*/true) {
+                    if (pieces.at(y_index * 8 + x_index).side != piece.side) {
             	std::cout << "[" << x_index << ", " << y_index << "]\n";
                         valid_moves.push_back(y_index * 8 + x_index);
                     }

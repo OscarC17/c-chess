@@ -7,7 +7,7 @@ std::string boardfillp =
 	"rhbqkbhr"
 	"pppppppp"
 	"        "
-	"     q  "
+	"        "
 	"        "
 	"        "
 	"pppppppp"
@@ -17,25 +17,20 @@ std::string boardfills =
 	"00000000"
 	"00000000"
 	"        "
-	"     1  "
+	"        "
 	"        "
 	"        "
 	"11111111"
 	"11111111";
 
 std::unordered_map<char, std::string> rulesencoded = {
-    {'P', "*s0001as-101bs0101cs0002"},
     {'r', "*r0001*r00-1*r0100*r-100"},
     {'h', "*s0102*s0201*s02-1*s01-2*s-102*s-201*s-2-1*s-1-2"},
     {'b', "*r0101*r01-1*r-101*r-1-1"},
     {'q', "*r0101*r01-1*r-101*r-1-1*r0001*r00-1*r0100*r-100"},
     {'k', "*s0101*s01-1*s-101*s-1-1*s0001*s00-1*s0100*s-100"},
-    {'p', "*s00-1ds-1-1es01-1fs00-2"},
-    {'R', "*r0001*r00-1*r0100*r-100"},
-    {'H', "*s0102*s0201*s02-1*s01-2*s-102*s-201*s-2-1*s-1-2"},
-    {'B', "*r0101*r01-1*r-101*r-1-1"},
-    {'Q', "*r0101*r01-1*r-101*r-1-1*r0001*r00-1*r0100*r-100"},
-    {'K', "*s0101*s01-1*s-101*s-1-1*s0001*s00-1*s0100*s-100"},
+    //{'p', "*s00-1ds-1-1es01-1fs00-2"},
+    {'p', "*s-100ds-1-1es01-1fs00-2"},
 };
 
 
@@ -44,9 +39,21 @@ ChessPiece::ChessPiece(char t, char s, bool a, std::string m) {
 
 }
 
+bool intInVec(std::vector<int> vec, int val) {
+	for (auto elem : vec) {
+		std::cout << " elem: " << elem << " vec: " << val << "\n";
+		if (elem == val) {
+			return true;
+		}
+	}
+	return false;
+}
+
 
 int main(int argc, char * argv[]) {
 	std::vector<ChessPiece> chessboard;
+
+	ChessPiece nullpiece = ChessPiece(' ', ' ', false, "");
 
 	
 	for (int i = 0; i < 8; i++) {
@@ -74,7 +81,13 @@ int main(int argc, char * argv[]) {
 			drawBoard(chessboard, srcIndex, moves);
 			std::cout << (turn=='1'?"White":"Black") << "'s turn\n" << "Select a destination\n";
 			int destIndex = inputToIndex();
-			turn = turn=='0'?'1':'0';
+			if (!intInVec(moves, destIndex)) {
+				std::cout << "That is not a valid move\n";
+			} else {
+				chessboard.at(destIndex) = chessboard.at(srcIndex);
+				chessboard.at(srcIndex) = nullpiece;
+				turn = turn=='0'?'1':'0';
+			}
 		}
 	}
 
