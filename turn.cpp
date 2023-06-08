@@ -17,6 +17,7 @@ std::vector<int> genTurn(std::vector<ChessPiece> pieces, std::string special_cas
     std::cout << "ruleset len: " << ruleset.length() <<std::endl;
 	std::cout << ruleset << "\n";
     for (int i = 0; i < ruleset.length() / 6; i++) {
+		std::cout << special_case << ": " << (special_case.find(ruleset[i*6]) != std::string::npos) << std::endl;
         if (ruleset[i * 6] == '*' || special_case.find(ruleset[i*6]) != std::string::npos) {
             int rep = (ruleset[i*6+1] == 'r')?10:1;
             std::cout << "WHAT THE: " << i << " :EHT TAHW\n";
@@ -41,7 +42,7 @@ std::vector<int> genTurn(std::vector<ChessPiece> pieces, std::string special_cas
                 } else if (pieces.at(y_index * 8 + x_index).type != ' ') {
 					std::cout << "numa ye";
                     if (pieces.at(y_index * 8 + x_index).side != piece.side) {
-            	std::cout << "[" << x_index << ", " << y_index << "]\n";
+						std::cout << "[" << x_index << ", " << y_index << "]\n";
                         valid_moves.push_back(y_index * 8 + x_index);
                     }
                     j = rep + 1;
